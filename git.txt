@@ -1,0 +1,201 @@
+ 一、----------------------本地暂存区操作----------------------------
+1、文件添加到暂存区
+　　git add *.txt test.java
+　　git add . 添加所有修改过的文件到暂存区，包括未跟踪文件，忽略文件不包含
+
+2、比较工作目录和暂存区快照之间的差异，也就是修改之后没有add的内容：
+　　git diff
+
+3、查看repository的状态
+　　git status
+
+4、比较上一次提交的快照和暂存区中文件的差别，两个命令效果一样：
+　　git diff --staged(1.6以上版本可用)，git diff –cached
+
+5、忽略某些文件，建立名字为.gitignore的文件，将需要忽略的文件添加进去即可。
+
+6、提交更新
+　　git commit –m “描述内容”
+
+7、跳过暂存区直接提交，加上-a参数
+　　git commit –a –m “跳过暂存区提交”
+
+8、删除仓库中的某个文件
+　　8.1、直接删除文件
+　　　　使用 git rm xxx.txt ，之后再进行commit即可删除。
+　　8.2、强制删除add到暂存区的文件，使用参数-f
+　　　　git rm –f xxx.txt
+
+9、将某些文件从跟踪列表中移除，需要递归的话，使用 \
+　　git rm --cached xxx.txt
+　　git rm --cached \*.class 将当前目录及其子目录中的以class结尾的文件从跟踪列表移除。
+　　git rm --cached -r 文件名 递归移除
+
+9、重命名文件
+　　git mv delete.txt add.txt
+
+10、查看log
+　　git log –p -2
+　　-p 选项展开显示每次提交的内容差异
+　　-<n> 仅显示最近的若干条提交
+　　--stat 仅显示简要的增改行数统计
+　　--pretty 自己制定日志显示格式
+　　=oneline 将每个提交放在一行显示
+　　= format
+　　--graph开头多出一些 ASCII 字符串表示的简单图形，形象地展示了每个提交所在的分支及其分化衍合情况
+
+11、提交完了才发现漏掉了几个文件没有加，或者提交信息写错了
+　　git commit --amend
+
+12、取消已暂存的文件
+　　git reset HEAD xxx.txt
+      git reset HEAD .              "."表示所有文件的意思   
+
+13、取消对工作区文件的修改，--是转义的意思，比如有个文件叫master，如果不加--就切换到master分支上了，加了代表--后的一定是文件。主要是撤销工作区文件的修改，提交到暂存区后不会回滚到工作区。比如文件内容是 aaa，版本库也是 aaa。现在修改为 aaabbb，使用该命令相当于把aaabbb修改为aaa，前提是没有将文件提交到暂存区(add)或版本库(commit).相当于手工把aaa后的bbb删除了，只留下aaa。
+
+　　git checkout -- xxx.txt
+
+14、版本回退
+
+　　通过上面10中可以看到每次提交的 id号。
+
+　　git reset --hard id
+
+二、----------------------------------远程仓库相关-----------------------------------
+1、从指定远程库下载项目
+　　git clone URL
+　　查看关联远程仓库信息
+　　git remote 或者 git remote –v
+
+2、 添加一个新的远程仓库
+　　git remote add [shortname] [url]
+　　git remote add csb URL
+
+3、 从远程仓库抓取数据（远程仓库中有的而本地没有的数据）
+　　git fetch [remote-name] 不会执行merge命令
+　　git pull [remote-name] 会自动执行merge命令
+
+4、 推送数据到远程仓库
+　　git push [remote-name] [branch-name] 或
+
+　　git push -u [remote-name] [branch-name]
+
+      git remote add origin https://github.com/wangmingshun/studygit.git（第一次提交远程）
+	git remote add origin https://github.com/liangzhiyi/justTest.git
+	git pull --rebase origin master            ---最好先执行从远程仓拉取全部内容（不然可能报错）
+
+     
+      git push origin master     --提交到远程仓（本地已提交）
+
+
+5、 查看远程仓库信息
+　　git remote show [remote-name]
+
+6、 远程仓库的重命名
+　　git remote rename [old-nane] [new-name]
+
+7、 删除远程仓库
+　　git remote rm [remote-name]
+
+8、 创建一个含有附注的标签(annotated)
+　　git tag –a v1.0 –m “my first annotated tag”
+　　git show [标签名] 显示标签的版本信息
+
+9、 创建一个含有签署的标签(signed)
+　　git tag –s v1.1 –m “my first signed tag”
+
+10、创建一个轻量标签(lightweight)
+　　git tag v1.2
+
+11、验证标签
+　　git tag –v [tag-name]
+
+12、后期加注标签
+　　git log –pretty=oneline
+　　git tag –a [tag-name] [校验和]
+
+13、标签推送到远程仓库
+　　git push origin [tag-name]
+　　git push origin --tags 将所有标签推送
+
+14、改变分支
+      git checkout master
+     
+      列出所有分支
+      git branch -a
+4.切换远程开发分支线
+
+git checkout -b dev origin/dev
+
+切换远程分支origin/dev
+5.切换远程正式分支
+
+git checkout -b release origin/release
+
+6.切换回本地dev分支，开始开发
+git checkout dev
+
+以下命令创建iss53分支并切换至iss53分支
+git checkout -b iss53
+
+以下两条命令等同上面一条命令
+git branch iss53
+git checkout iss53
+
+合并分支命令，在master分支下操作
+git merge iss53
+
+然后删除分支
+git branch -d iss53
+
+
+使用 git branch fenzhi2
+使用 git checkout fenzhi2 切换到第二个分支
+使用 git branch --set-upstream-to origin/fenzhi2 关联到第二个分支
+使用 git log --graph --decorate --oneline --simplify-by-decoration --all
+使用上面显示分支图，然后找到远程分支的开始节点
+使用 git reset --hard *** 切换到远程分支 fenzhi2 的工作目录。这时候就可以正常使用了
+----------------------------我的springcloud项目---------------------------------
+git add .
+git commit -m "注释说明"
+git remote add origin https://github.com/liangzhiyi/microservicecloud 
+git pull -u origin master
+git push origin master
+
+------------------------解决冲突-----------------------------------
+git stash
+
+先将本地修改存储起来
+
+git stash list
+
+可以看到保存的信息， stash@{0}就是刚才保存的标记
+
+git pull
+
+获取内容
+
+git stash pop stash@{0}
+
+还原暂存的内容
+
+git add .
+添加内容
+
+ git rebase --continue
+合并冲突吧
+
+git push origin master
+再次提交
+
+----------------------------恢复误删内容----------------------
+git status
+查看情况
+
+git reset HEAD abbr_data
+从暂存区读取删除文件
+
+git checkout -- abbr_data
+恢复文件
+
+
